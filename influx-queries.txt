@@ -1,0 +1,32 @@
+CREATE CONTINUOUS QUERY "query_1"
+on "WarunkiNauki"
+
+BEGIN
+SELECT mean(temperature) as temp_mean,
+    min(temperature) as temp_min,
+    max(temperature) as temp_max,
+    mean(humidity) as hum_mean,
+    min(humidity) as hum_min,
+    max(humidity) as hum_max
+    INTO R2h.pomiary_2h
+    FROM R1h.pomiary
+    GROUP BY time(15m)
+END;
+
+
+
+CREATE CONTINUOUS QUERY "query_2"
+on "WarunkiNauki"
+
+BEGIN
+  SELECT
+  mean(temp_mean) as temp_mean,
+  min(tem_min) as temp_min,
+  max(temp_max) as temp_max,
+  mean(hum_mean) as hum_mean,
+  min(hum_min) as hum_min,
+  max(hum_max) as hum_max
+  INTO R1d.pomiary_1d
+  FROM R2h.pomiary_2h
+  GROUP BY time(1h)
+END;
